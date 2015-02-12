@@ -45,7 +45,7 @@ app.use( function(err, req, res, next) {
 //app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({limit: 10000000}));
 
-app.post( '/add', meta.save );
+app.post( '/add', collect.add );
 
 app.listen( 3000 );
 console.log( 'Listening on port 3000...' );
