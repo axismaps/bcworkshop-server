@@ -19,7 +19,7 @@ exports.add = function( req, res ) {
 	
 	query.on( 'end', function()
 	{
-		res.send( "OK" );
+		res.send( req.body.name );
 		client.end();
 	});
 }
