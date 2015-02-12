@@ -1,11 +1,9 @@
 var pg = require( 'pg' ),
-	conn = 'postgres://davidheyman@localhost/bcworkshop';
+	db = require( './db' );
 	
 exports.add = function( req, res ) {
-	var client = new pg.Client( conn );
+	var client = new pg.Client( db.conn );
 	client.connect();
-	
-	console.log( req.body );
 	
 	var queryString = "INSERT INTO neighborhood_collection ( name, uuid, confidence, comments, geom ) VALUES( ";
 	

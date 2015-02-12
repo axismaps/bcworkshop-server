@@ -1,6 +1,18 @@
 # bcworkshop-server
 Community mapping tools and services
 
+## Installation instructions
+Install node dependencies:
+```
+npm install
+```
+
+Add your postgres connection string to /server/db.js like:
+```
+exports.conn = 'postgres://username:password@db-host/database';
+```
+
+
 ## Express Functions
 
 ### /collect/add
