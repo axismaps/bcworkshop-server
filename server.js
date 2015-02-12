@@ -42,7 +42,6 @@ app.use( function(err, req, res, next) {
   res.render('error', { error: err });
 });
 
-//app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({limit: 10000000}));
 
 app.post( '/add', collect.add );
