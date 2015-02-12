@@ -13,12 +13,9 @@ exports.add = function( req, res ) {
 	queryString += req.body.comments ? "'" + req.body.comments + "', " : "NULL, ";
 	queryString += "ST_GeomFromGeoJSON( '" + req.body.geojson + "' ) )"
 	
-	console.log( queryString );
-	
 	var query = client.query( queryString );
 	
-	query.on( 'end', function()
-	{
+	query.on( 'end', function() {
 		res.send( req.body.name );
 		client.end();
 	});

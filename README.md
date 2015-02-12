@@ -15,7 +15,7 @@ exports.conn = 'postgres://username:password@db-host/database';
 
 ## Express Functions
 
-### /collect/add
+### /add
 
 **POST:** GeoJSON of single neighborhood polygon with attributes
 
@@ -27,3 +27,7 @@ exports.conn = 'postgres://username:password@db-host/database';
 4. Session ID (random hash created as client-side cookie)
 
 **Returns:** Status of success or failure
+
+### /names
+
+**Returns:** Flat array of names for each neighborhood in the final table

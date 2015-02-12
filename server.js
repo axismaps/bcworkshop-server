@@ -1,6 +1,7 @@
 var express = require( 'express' ),
 	bodyParser = require( 'body-parser' ),
-    collect = require( './server/collect' );
+    collect = require( './server/collect' ),
+    retrieve = require( './server/retrieve' );
 
 var app = express();
 
@@ -45,6 +46,7 @@ app.use( function(err, req, res, next) {
 app.use(bodyParser.urlencoded({limit: 10000000}));
 
 app.post( '/add', collect.add );
+app.get( '/names', retrieve.names );
 
 app.listen( 3000 );
 console.log( 'Listening on port 3000...' );
