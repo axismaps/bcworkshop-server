@@ -46,6 +46,7 @@ app.use( function(err, req, res, next) {
 app.use(bodyParser.urlencoded({limit: 10000000}));
 
 app.post( '/add', collect.add );
+app.get( '/delete/:uuid/:name', collect.delete );
 app.get( '/names', retrieve.names );
 
 app.listen( 3000 );
