@@ -1,4 +1,5 @@
 var pg = require( 'pg' ),
+	_ = require( 'underscore' ),
 	dbgeo = require( 'dbgeo' ),
 	db = require( './db' );
 	
@@ -73,5 +74,34 @@ exports.names = function( req, res ) {
 	query.on( 'end', function() {
 		res.send( names );
 		client.end();
+	});
+}
+
+exports.template = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	var template = JSON.parse( req.body.json ),
+		id = req.body.id,
+		html = '';
+		
+	_.each( template, function( part ) {
+		var data = [];
+		html += part.header;
+		
+		var query = client.query( part.query + " WHERE id = " + id );
+		query.on( 'row', function( result ) {
+			data.push( result );
+		});
+		
+		query.on( 'end', function() {
+			html += _.map( data, function( row ) {
+				return _.map( part.style, function( item ) {
+					return item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+				})
+			})
+			res.send( html );
+			client.end();
+		});
 	});
 }
