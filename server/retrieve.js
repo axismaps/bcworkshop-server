@@ -84,24 +84,36 @@ exports.template = function( req, res ) {
 	var template = JSON.parse( req.body.json ),
 		id = req.body.id,
 		html = '';
+	
+	load_part( template.shift() );
 		
-	_.each( template, function( part ) {
+	function load_part( part ) {		
 		var data = [];
-		html += part.header;
-		
 		var query = client.query( part.query + " WHERE id = " + id );
 		query.on( 'row', function( result ) {
 			data.push( result );
 		});
 		
 		query.on( 'end', function() {
+			html += part.header;
 			html += _.reduce( data, function( s1, row ) {
 				return s1 + _.reduce( part.style, function( s2, item ) {
 					return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
 				}, '' )
 			}, '' );
-			res.send( html );
-			client.end();
+			html += part.footer;
+			
+			if( template.length ) {
+				load_part( template.shift() );
+			}
+			else {
+				complete();
+			}
 		});
-	});
+	}
+	
+	function complete() {
+		res.send( html );
+		client.end();
+	}
 }
