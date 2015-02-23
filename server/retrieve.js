@@ -45,12 +45,29 @@ exports.names = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	var names = [];
+	var names = [],
+		queryString = "SELECT id";
+		
+	if( req.params.fields ) {
+		var fields = req.params.fields.split( "," );
 	
-	var query = client.query( "SELECT name FROM neighborhoods WHERE name IS NOT NULL ORDER BY name" );
+		for( var i = 0; i < fields.length; i++ ) {
+			queryString += ", " + fields[ i ];
+		}
+	}
+	else {
+		queryString += ", name";
+	}
+	queryString +=  " FROM neighborhoods WHERE name IS NOT NULL"
+	
+	if( req.params.id ) {
+		queryString += " AND id = " + req.params.id;
+	}
+	
+	var query = client.query( queryString );
 	
 	query.on( 'row', function( result ) {
-		names.push( result.name );
+		names.push( result );
 	})
 	
 	query.on( 'end', function() {

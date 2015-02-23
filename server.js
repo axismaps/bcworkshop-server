@@ -48,7 +48,7 @@ app.use(bodyParser.urlencoded({limit: 10000000}));
 app.post( '/add', collect.add );
 app.get( '/delete/:uuid/:name', collect.delete );
 app.get( '/neighborhoods', retrieve.neighborhoods );
-app.get( '/names', retrieve.names );
+app.get( '/names/:fields?/:id?', retrieve.names );
 app.get( '/services/:neighborhood', retrieve.services );
 
 app.listen( 3000 );
