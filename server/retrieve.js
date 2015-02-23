@@ -23,6 +23,23 @@ exports.neighborhoods = function( req, res ) {
 	});
 }
 
+exports.services = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	var services = [];
+	
+	var query = client.query( "SELECT organizations.* FROM neighborhoods INNER JOIN organization_lookup ON neighborhoods.id = neighborhood INNER JOIN organizations ON organizations.id = organization WHERE neighborhoods.id = '" + req.params.neighborhood + "'" );
+	
+	query.on( 'row', function( result ) {
+		services.push( result );
+	});
+	
+	query.on( 'end', function() {
+		res.send( services );
+		client.end();
+	})
+}
 
 exports.names = function( req, res ) {
 	var client = new pg.Client( db.conn );

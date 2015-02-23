@@ -49,6 +49,7 @@ app.post( '/add', collect.add );
 app.get( '/delete/:uuid/:name', collect.delete );
 app.get( '/neighborhoods', retrieve.neighborhoods );
 app.get( '/names', retrieve.names );
+app.get( '/services/:neighborhood', retrieve.services );
 
 app.listen( 3000 );
 console.log( 'Listening on port 3000...' );
