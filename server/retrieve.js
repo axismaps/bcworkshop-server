@@ -95,11 +95,11 @@ exports.template = function( req, res ) {
 		});
 		
 		query.on( 'end', function() {
-			html += _.map( data, function( row ) {
-				return _.map( part.style, function( item ) {
-					return item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-				})
-			})
+			html += _.reduce( data, function( s1, row ) {
+				return s1 + _.reduce( part.style, function( s2, item ) {
+					return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+				}, '' )
+			}, '' );
 			res.send( html );
 			client.end();
 		});
