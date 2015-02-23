@@ -5,8 +5,8 @@
   "private": true,
   "dependencies": {
     "body-parser": "^1.4.3",
+    "dbgeo": "0.0.3",
     "express": "4.1.1",
-    "pg": "3.0.3",
-    "postgeo": "*"
+    "pg": "3.0.3"
   }
 }

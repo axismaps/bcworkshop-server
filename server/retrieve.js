@@ -1,6 +1,28 @@
 var pg = require( 'pg' ),
+	dbgeo = require( 'dbgeo' ),
 	db = require( './db' );
 	
+exports.neighborhoods = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	client.query( "SELECT id, name, ST_AsGeoJSON( geom ) AS geom FROM neighborhoods", function( error, result ) {
+		dbgeo.parse({
+		    "data": result.rows,
+			"geometryColumn": "geom",
+			"outputFormat": "topojson",
+			"callback": function( error, result ) {
+				if( error ) {
+		    		    console.log( " --- error --- ", error);
+				} else {
+					res.send( result );
+				}
+		    }
+		});
+	});
+}
+
+
 exports.names = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
