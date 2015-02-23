@@ -16,6 +16,7 @@ exports.neighborhoods = function( req, res ) {
 		    		    console.log( " --- error --- ", error);
 				} else {
 					res.send( result );
+					client.end();
 				}
 		    }
 		});
