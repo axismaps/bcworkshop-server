@@ -3,11 +3,17 @@ var pg = require( 'pg' ),
 	dbgeo = require( 'dbgeo' ),
 	db = require( './db' );
 	
-exports.neighborhoods = function( req, res ) {
+exports.topojson = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	client.query( "SELECT id, name, ST_AsGeoJSON( geom ) AS geom FROM neighborhoods", function( error, result ) {
+	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "gid" ];
+	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
+	
+	var queryString = buildQuery( fields, req.params.table, req.params.where )
+	console.log( queryString );
+	
+	client.query( queryString, function( error, result ) {
 		dbgeo.parse({
 		    "data": result.rows,
 			"geometryColumn": "geom",
@@ -46,25 +52,14 @@ exports.names = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	var names = [],
-		queryString = "SELECT id";
+	var names = [];
 		
-	if( req.params.fields ) {
-		var fields = req.params.fields.split( "," );
+	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "id", "name" ];
+	var where = "name IS NOT NULL";
+	if( req.params.id ) where += " AND id = " + req.params.id;
 	
-		for( var i = 0; i < fields.length; i++ ) {
-			queryString += ", " + fields[ i ];
-		}
-	}
-	else {
-		queryString += ", name";
-	}
-	queryString +=  " FROM neighborhoods WHERE name IS NOT NULL"
-	
-	if( req.params.id ) {
-		queryString += " AND id = " + req.params.id;
-	}
-	
+	var queryString = buildQuery( fields, "neighborhoods", where );
+	console.log( queryString );
 	var query = client.query( queryString );
 	
 	query.on( 'row', function( result ) {
@@ -116,4 +111,18 @@ exports.template = function( req, res ) {
 		res.send( html );
 		client.end();
 	}
+}
+
+function buildQuery( fields, table, where ) {
+	var queryString = "SELECT";
+	
+	queryString = _.reduce( fields, function( memo, field, i ) {
+		if( i > 0 ) memo += ",";
+		return memo += " " + field;
+	}, queryString );
+	
+	queryString += " FROM " + table;
+	if( where ) queryString += " WHERE " + where;
+	
+	return queryString;
 }
