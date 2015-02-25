@@ -11,8 +11,6 @@ exports.topojson = function( req, res ) {
 	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
 	
 	var queryString = buildQuery( fields, req.params.table, req.params.where )
-	console.log( queryString );
-	
 	client.query( queryString, function( error, result ) {
 		dbgeo.parse({
 		    "data": result.rows,
@@ -59,7 +57,6 @@ exports.names = function( req, res ) {
 	if( req.params.id ) where += " AND id = " + req.params.id;
 	
 	var queryString = buildQuery( fields, "neighborhoods", where );
-	console.log( queryString );
 	var query = client.query( queryString );
 	
 	query.on( 'row', function( result ) {
