@@ -51,7 +51,7 @@ app.get( '/delete/:uuid/:name', collect.delete );
 app.get( '/topojson/:table/:fields?/:where?', retrieve.topojson );
 app.get( '/names/:fields?/:id?', retrieve.names );
 app.get( '/services/:neighborhood', retrieve.services );
-app.get( '/neighborhoods', retrieve.neighborhoods );
+app.get( '/download', retrieve.download);
 
 app.listen( 3000 );
 console.log( 'Listening on port 3000...' );

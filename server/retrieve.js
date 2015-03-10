@@ -28,7 +28,7 @@ exports.topojson = function( req, res ) {
 	});
 }
 
-exports.neighborhoods = function( req, res ) {
+exports.download = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
