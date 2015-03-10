@@ -28,6 +28,16 @@ exports.topojson = function( req, res ) {
 	});
 }
 
+exports.neighborhoods = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	
+	
+	res.send( "Hello World!" );
+	client.end();
+}
+
 exports.services = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
