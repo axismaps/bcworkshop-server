@@ -32,10 +32,25 @@ exports.neighborhoods = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
+	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "gid", "name", "description", "comments" ];
+	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
 	
-	
-	res.send( "Hello World!" );
-	client.end();
+	var queryString = buildQuery( fields, "neighborhoods", req.params.where )
+	client.query( queryString, function( error, result ) {
+		dbgeo.parse({
+		    "data": result.rows,
+			"geometryColumn": "geom",
+			"outputFormat": "topojson",
+			"callback": function( error, result ) {
+				if( error ) {
+		    		    console.log( " --- error --- ", error);
+				} else {
+					res.download( result );
+					client.end();
+				}
+		    }
+		});
+	});
 }
 
 exports.services = function( req, res ) {
