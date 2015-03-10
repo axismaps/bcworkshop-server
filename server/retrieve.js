@@ -35,7 +35,7 @@ exports.download = function( req, res ) {
 	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "gid", "name", "description", "comments" ];
 	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
 	
-	var queryString = buildQuery( fields, "neighborhoods", req.params.where )
+	var queryString = buildQuery( fields, "neighborhoods" )
 	client.query( queryString, function( error, result ) {
 		dbgeo.parse({
 		    "data": result.rows,
@@ -43,9 +43,12 @@ exports.download = function( req, res ) {
 			"outputFormat": "topojson",
 			"callback": function( error, result ) {
 				if( error ) {
-		    		    console.log( " --- error --- ", error);
+					console.log( " --- error --- ", error);
 				} else {
-					res.download( result );
+					var file = { "file" : result }
+					res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.json" });
+					res.set({ "Content-type" : "application/json" });
+					res.send( file.file );
 					client.end();
 				}
 		    }
