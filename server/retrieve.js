@@ -89,9 +89,22 @@ exports.template = function( req, res ) {
 			if ( data.length ) {
 				html += part.header;
 				html += _.reduce( data, function( s1, row ) {
-					return s1 + _.reduce( part.style, function( s2, item ) {
-						return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-					}, '' )
+					if ( row.type ) {
+						var type = row.type.trim();
+						return s1 + _.reduce( part.style, function( s2, item ) {
+							if ( item.data == type ) {
+								return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+							}
+							else {
+								return ''
+							}
+						}, '' )
+					}
+					else {
+						return s1 + _.reduce( part.style, function( s2, item ) {
+							return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+						}, '' )
+					}
 				}, '' );
 				html += part.footer;
 			}
