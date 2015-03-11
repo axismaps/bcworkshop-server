@@ -40,7 +40,7 @@ exports.download = function( req, res ) {
 		dbgeo.parse({
 		    "data": result.rows,
 			"geometryColumn": "geom",
-			"outputFormat": "topojson",
+			"outputFormat": "geojson",
 			"callback": function( error, result ) {
 				if( error ) {
 					console.log( " --- error --- ", error);
