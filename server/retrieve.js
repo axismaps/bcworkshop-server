@@ -96,7 +96,7 @@ exports.template = function( req, res ) {
 								return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
 							}
 							else {
-								return ''
+								return s2
 							}
 						}, '' )
 					}
