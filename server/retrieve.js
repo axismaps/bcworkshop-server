@@ -32,7 +32,7 @@ exports.download = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "gid", "name", "description", "comments" ];
+	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "id", "name", "description" ];
 	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
 	
 	var queryString = buildQuery( fields, "neighborhoods" )
