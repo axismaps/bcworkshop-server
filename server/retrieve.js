@@ -85,15 +85,16 @@ exports.template = function( req, res ) {
 		query.on( 'row', function( result ) {
 			data.push( result );
 		});
-		
 		query.on( 'end', function() {
-			html += part.header;
-			html += _.reduce( data, function( s1, row ) {
-				return s1 + _.reduce( part.style, function( s2, item ) {
-					return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-				}, '' )
-			}, '' );
-			html += part.footer;
+			if ( data.length ) {
+				html += part.header;
+				html += _.reduce( data, function( s1, row ) {
+					return s1 + _.reduce( part.style, function( s2, item ) {
+						return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+					}, '' )
+				}, '' );
+				html += part.footer;
+			}
 			
 			if( template.length ) {
 				load_part( template.shift() );
