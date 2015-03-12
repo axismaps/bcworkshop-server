@@ -7,12 +7,12 @@ exports.add = function( req, res ) {
 	
 	var queryString = "INSERT INTO neighborhood_collection ( name, uuid, confidence, comments, geom ) VALUES( ";
 	
-	queryString += "'" + req.body.name + "', ";
+	queryString += "'" + req.body.name.replace(/[']/g, "''") + "', ";
 	queryString += "'" + req.body.uuid + "', ";
 	queryString += req.body.confidence + ", ";
 	queryString += req.body.comments ? "'" + req.body.comments + "', " : "NULL, ";
 	queryString += "ST_GeomFromGeoJSON( '" + req.body.geojson + "' ) )"
-	
+
 	var query = client.query( queryString );
 	
 	query.on( 'end', function() {
