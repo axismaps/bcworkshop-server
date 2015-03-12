@@ -31,3 +31,7 @@ exports.conn = 'postgres://username:password@db-host/database';
 ### /names
 
 **Returns:** Flat array of names for each neighborhood in the final table
+
+### /download
+
+**Returns:** GeoJSON file for download with `id` `name` and `description` as `properties` values.
