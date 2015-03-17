@@ -109,19 +109,33 @@ exports.template = function( req, res ) {
 		
 	function load_part( part ) {		
 		var data = [];
-		var query = client.query( part.query + " WHERE id = " + id );
+		var query = client.query( part.query + " WHERE neighborhoods.id = " + id );
 		query.on( 'row', function( result ) {
 			data.push( result );
 		});
-		
 		query.on( 'end', function() {
-			html += part.header;
-			html += _.reduce( data, function( s1, row ) {
-				return s1 + _.reduce( part.style, function( s2, item ) {
-					return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-				}, '' )
-			}, '' );
-			html += part.footer;
+			if ( data.length ) {
+				html += part.header;
+				html += _.reduce( data, function( s1, row ) {
+					if ( row.type ) {
+						var type = row.type.trim();
+						return s1 + _.reduce( part.style, function( s2, item ) {
+							if ( item.data == type ) {
+								return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+							}
+							else {
+								return s2
+							}
+						}, '' )
+					}
+					else {
+						return s1 + _.reduce( part.style, function( s2, item ) {
+							return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+						}, '' )
+					}
+				}, '' );
+				html += part.footer;
+			}
 			
 			if( template.length ) {
 				load_part( template.shift() );
