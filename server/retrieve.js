@@ -46,8 +46,8 @@ exports.download = function( req, res ) {
 					console.log( " --- error --- ", error);
 				} else {
 					var file = { "file" : result }
-					res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.json" });
-					res.set({ "Content-type" : "application/json" });
+					res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.geojson" });
+					res.set({ "Content-type" : "application/vnd.geo+json" });
 					res.send( file.file );
 					client.end();
 				}
