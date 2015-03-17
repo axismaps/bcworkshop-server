@@ -28,6 +28,34 @@ exports.topojson = function( req, res ) {
 	});
 }
 
+exports.download = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "id", "name", "description" ];
+	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
+	
+	var queryString = buildQuery( fields, "neighborhoods" )
+	client.query( queryString, function( error, result ) {
+		dbgeo.parse({
+		    "data": result.rows,
+			"geometryColumn": "geom",
+			"outputFormat": "geojson",
+			"callback": function( error, result ) {
+				if( error ) {
+					console.log( " --- error --- ", error);
+				} else {
+					var file = { "file" : result }
+					res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.geojson" });
+					res.set({ "Content-type" : "application/vnd.geo+json" });
+					res.send( file.file );
+					client.end();
+				}
+		    }
+		});
+	});
+}
+
 exports.services = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
