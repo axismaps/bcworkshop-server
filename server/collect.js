@@ -26,7 +26,7 @@ exports.delete = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	var query = client.query( "DELETE FROM neighborhood_collection WHERE gid = ANY ( ARRAY ( SELECT gid FROM neighborhood_collection WHERE uuid = '" + req.params.uuid + "' AND name = '" + req.params.name + "' ORDER BY added DESC LIMIT 1 ) )" );
+	var query = client.query( "DELETE FROM neighborhood_collection WHERE gid = ANY ( ARRAY ( SELECT gid FROM neighborhoods_collection WHERE uuid = '" + req.params.uuid + "' AND name = '" + req.params.name + "' ORDER BY added DESC LIMIT 1 ) )" );
 	
 	query.on( 'end', function() {
 		res.send( "DELETED" );
