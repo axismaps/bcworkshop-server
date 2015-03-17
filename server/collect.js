@@ -10,7 +10,7 @@ exports.add = function( req, res ) {
 	queryString += "'" + req.body.name.replace(/[']/g, "''") + "', ";
 	queryString += "'" + req.body.uuid + "', ";
 	queryString += req.body.confidence + ", ";
-	queryString += req.body.comments ? "'" + req.body.comments + "', " : "NULL, ";
+	queryString += req.body.comments ? "'" + req.body.comments.replace(/[']/g, "''") + "', " : "NULL, ";
 	queryString += "ST_GeomFromGeoJSON( '" + req.body.geojson + "' ) )"
 
 	var query = client.query( queryString );
