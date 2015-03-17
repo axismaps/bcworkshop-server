@@ -81,7 +81,7 @@ exports.template = function( req, res ) {
 		
 	function load_part( part ) {		
 		var data = [];
-		var query = client.query( part.query + " WHERE id = " + id );
+		var query = client.query( part.query + " WHERE neighborhoods.id = " + id );
 		query.on( 'row', function( result ) {
 			data.push( result );
 		});
