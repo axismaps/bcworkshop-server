@@ -5,7 +5,9 @@ exports.add = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	var queryString = "INSERT INTO neighborhood_collection ( name, uuid, confidence, comments, geom, tool_used ) VALUES( ";
+	var neighborhoodType = ( req.body.neighborhood === "neighborhood" ) ? "neighborhoods_collection" : "superneighborhoods_collection";
+	
+	var queryString = "INSERT INTO " + neighborhoodType + " ( name, uuid, confidence, comments, geom, tool_used ) VALUES( ";
 	
 	queryString += "'" + req.body.name.replace(/[']/g, "''") + "', ";
 	queryString += "'" + req.body.uuid + "', ";
