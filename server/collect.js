@@ -5,7 +5,9 @@ exports.add = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	var queryString = "INSERT INTO neighborhood_collection ( name, uuid, confidence, comments, geom, tool_used ) VALUES( ";
+	var neighborhoodType = ( req.body.neighborhood === "neighborhood" ) ? "neighborhoods_collection" : "superneighborhoods_collection";
+	
+	var queryString = "INSERT INTO " + neighborhoodType + " ( name, uuid, confidence, comments, geom, tool_used ) VALUES( ";
 	
 	queryString += "'" + req.body.name.replace(/[']/g, "''") + "', ";
 	queryString += "'" + req.body.uuid + "', ";
@@ -26,7 +28,11 @@ exports.delete = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
 	
-	var query = client.query( "DELETE FROM neighborhood_collection WHERE gid = ANY ( ARRAY ( SELECT gid FROM neighborhoods_collection WHERE uuid = '" + req.params.uuid + "' AND name = '" + req.params.name + "' ORDER BY added DESC LIMIT 1 ) )" );
+	var neighborhoodType = ( req.params.neighborhood === "neighborhood" ) ? "neighborhoods_collection" : "superneighborhoods_collection";
+	
+	var query = client.query( "DELETE FROM " + neighborhoodType + " WHERE gid = ANY ( ARRAY ( SELECT gid FROM " + neighborhoodType + " WHERE uuid = '" + req.params.uuid + "' AND name = '" + req.params.name + "' ORDER BY added DESC LIMIT 1 ) )" );
+	
+	console.log( query );
 	
 	query.on( 'end', function() {
 		res.send( "DELETED" );
