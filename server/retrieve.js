@@ -130,7 +130,12 @@ exports.template = function( req, res ) {
 					}
 					else {
 						return s1 + _.reduce( part.style, function( s2, item ) {
-							return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+							if( row[ item.data ] ) {
+								return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+							}
+							else {
+								return s2
+							}
 						}, '' )
 					}
 				}, '' );
