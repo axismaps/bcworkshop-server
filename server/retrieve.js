@@ -10,7 +10,8 @@ exports.topojson = function( req, res ) {
 	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "gid" ];
 	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
 	
-	var queryString = buildQuery( fields, req.params.table, req.params.where )
+	var queryString = buildQuery( fields, req.params.table, req.params.where, 'area', 'DESC' )
+	
 	client.query( queryString, function( error, result ) {
 		dbgeo.parse({
 		    "data": result.rows,
@@ -157,7 +158,7 @@ exports.template = function( req, res ) {
 	}
 }
 
-function buildQuery( fields, table, where ) {
+function buildQuery( fields, table, where, order, asc_desc ) {
 	var queryString = "SELECT";
 	
 	queryString = _.reduce( fields, function( memo, field, i ) {
@@ -167,6 +168,8 @@ function buildQuery( fields, table, where ) {
 	
 	queryString += " FROM " + table;
 	if( where ) queryString += " WHERE " + where;
+	
+	if( order ) queryString += " ORDER BY " + order + " " + asc_desc;
 	
 	return queryString;
 }
