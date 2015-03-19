@@ -10,7 +10,7 @@ exports.topojson = function( req, res ) {
 	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "gid" ];
 	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
 	
-	var queryString = buildQuery( fields, req.params.table, req.params.where, 'area', 'DESC' )
+	var queryString = buildQuery( fields, req.params.table, req.params.where, 'area', 'DESC' );
 	
 	client.query( queryString, function( error, result ) {
 		dbgeo.parse({
