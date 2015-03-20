@@ -120,27 +120,14 @@ exports.template = function( req, res ) {
 			if ( data.length ) {
 				html += part.header;
 				html += _.reduce( data, function( s1, row ) {
-					if ( row.type ) {
-						var type = row.type.trim();
-						return s1 + _.reduce( part.style, function( s2, item ) {
-							if ( item.data == type ) {
-								return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-							}
-							else {
-								return s2
-							}
-						}, '' )
-					}
-					else {
-						return s1 + _.reduce( part.style, function( s2, item ) {
-							if( row[ item.data ] ) {
-								return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-							}
-							else {
-								return s2
-							}
-						}, '' )
-					}
+					return s1 + _.reduce( part.style, function( s2, item ) {
+						if( row[ item.data ] ) {
+							return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
+						}
+						else {
+							return s2
+						}
+					}, '' )
 				}, '' );
 				html += part.footer;
 			}
