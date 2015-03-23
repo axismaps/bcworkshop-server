@@ -10,7 +10,10 @@ exports.topojson = function( req, res ) {
 	var fields = req.params.fields ? req.params.fields.split( "," ) : [ "gid" ];
 	fields.push( "ST_AsGeoJSON( geom ) AS geom" );
 	
-	var queryString = buildQuery( fields, req.params.table, req.params.where )
+	var order = fields.indexOf( 'area' ) == -1 ? 'gid' : 'area'
+	
+	var queryString = buildQuery( fields, req.params.table, req.params.where, order, 'DESC' );
+	
 	client.query( queryString, function( error, result ) {
 		dbgeo.parse({
 		    "data": result.rows,
@@ -117,22 +120,14 @@ exports.template = function( req, res ) {
 			if ( data.length ) {
 				html += part.header;
 				html += _.reduce( data, function( s1, row ) {
-					if ( row.type ) {
-						var type = row.type.trim();
-						return s1 + _.reduce( part.style, function( s2, item ) {
-							if ( item.data == type ) {
-								return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-							}
-							else {
-								return s2
-							}
-						}, '' )
-					}
-					else {
-						return s1 + _.reduce( part.style, function( s2, item ) {
+					return s1 + _.reduce( part.style, function( s2, item ) {
+						if( row[ item.data ] ) {
 							return s2 + item.format.replace( /\|\|data\|\|/g, row[ item.data ] );
-						}, '' )
-					}
+						}
+						else {
+							return s2
+						}
+					}, '' )
 				}, '' );
 				html += part.footer;
 			}
@@ -152,7 +147,7 @@ exports.template = function( req, res ) {
 	}
 }
 
-function buildQuery( fields, table, where ) {
+function buildQuery( fields, table, where, order, asc_desc ) {
 	var queryString = "SELECT";
 	
 	queryString = _.reduce( fields, function( memo, field, i ) {
@@ -162,6 +157,8 @@ function buildQuery( fields, table, where ) {
 	
 	queryString += " FROM " + table;
 	if( where ) queryString += " WHERE " + where;
+	
+	if( order ) queryString += " ORDER BY " + order + " " + asc_desc;
 	
 	return queryString;
 }
