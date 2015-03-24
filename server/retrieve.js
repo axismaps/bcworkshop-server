@@ -74,6 +74,29 @@ exports.services = function( req, res ) {
 	})
 }
 
+exports.process = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	var queryString = "SELECT process, ST_AsGeoJSON( geom ) AS geom FROM neighborhoods_collection WHERE process = '" + req.params.neighborhood + "'";
+	
+	client.query( queryString, function( error, result ) {
+		dbgeo.parse({
+		    "data": result.rows,
+			"geometryColumn": "geom",
+			"outputFormat": "topojson",
+			"callback": function( error, result ) {
+				if( error ) {
+		    		    console.log( " --- error --- ", error);
+				} else {
+					res.send( result );
+					client.end();
+				}
+		    }
+		});
+	});
+}
+
 exports.names = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
