@@ -69,7 +69,8 @@ exports.latlon = function( req, res ) {
 	})
 	
 	query.on( 'end', function() {
-		res.send( latlons );
+		if( latlons.length == 0 ) res.send( 'No neighborhood organizations work at this point' )
+		else res.send( latlons );
 		client.end();
 	});
 }
