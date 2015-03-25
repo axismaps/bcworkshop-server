@@ -56,6 +56,24 @@ exports.download = function( req, res ) {
 	});
 }
 
+exports.latlon = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	var latlons = [];
+	
+	var query = client.query( "SELECT organizations.* FROM neighborhoods INNER JOIN organization_lookup ON neighborhoods.id = neighborhood INNER JOIN organizations ON organizations.id = organization WHERE ST_CONTAINS( geom, ST_SetSRID( ST_MakePoint(" + req.params.lon + "," + req.params.lat + "), 4326))" );
+	
+	query.on( 'row', function( result ) {
+		latlons.push( result );
+	})
+	
+	query.on( 'end', function() {
+		res.send( latlons );
+		client.end();
+	});
+}
+
 exports.services = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
@@ -72,6 +90,29 @@ exports.services = function( req, res ) {
 		res.send( services );
 		client.end();
 	})
+}
+
+exports.process = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	var queryString = "SELECT process, ST_AsGeoJSON( geom ) AS geom FROM neighborhoods_collection WHERE process = '" + req.params.neighborhood + "'";
+	
+	client.query( queryString, function( error, result ) {
+		dbgeo.parse({
+		    "data": result.rows,
+			"geometryColumn": "geom",
+			"outputFormat": "topojson",
+			"callback": function( error, result ) {
+				if( error ) {
+		    		    console.log( " --- error --- ", error);
+				} else {
+					res.send( result );
+					client.end();
+				}
+		    }
+		});
+	});
 }
 
 exports.names = function( req, res ) {

@@ -52,6 +52,8 @@ app.get( '/topojson/:table/:fields?/:where?', retrieve.topojson );
 app.get( '/names/:fields?/:id?', retrieve.names );
 app.get( '/services/:neighborhood', retrieve.services );
 app.get( '/download', retrieve.download);
+app.get( '/process/:neighborhood', retrieve.process );
+app.get( '/latlon/:lat/:lon', retrieve.latlon );
 
 app.listen( 3000 );
 console.log( 'Listening on port 3000...' );
