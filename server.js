@@ -55,5 +55,20 @@ app.get( '/download', retrieve.download);
 app.get( '/process/:neighborhood', retrieve.process );
 app.get( '/latlon/:lat/:lon', retrieve.latlon );
 
+app.get( '*', function( req, res, next) {
+	var err = new Error();
+	err.status = 404;
+	next(err);
+});
+
+app.use( function(err, req, res, next) {
+  if( err.status !== 404) {
+	  return next();
+  }
+  
+  res.status(404);
+  res.send(err.message || "You tried to go somewhere that doesn't exist or you didn't put parameters in correctly" );
+});
+
 app.listen( 3000 );
 console.log( 'Listening on port 3000...' );
