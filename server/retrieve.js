@@ -14,6 +14,7 @@ exports.topojson = function( req, res ) {
 	client.query( queryString, function( error, result ) {
 		if( error ) {
 			res.send( error );
+			client.end();
 		} else {
 			dbgeo.parse({
 				"data": result.rows,
@@ -106,6 +107,7 @@ exports.process = function( req, res ) {
 	client.query( queryString, function( error, result ) {
 		if( error ) {
 			res.send( error );
+			client.end();
 		} else {
 			dbgeo.parse({
 				"data": result.rows,
