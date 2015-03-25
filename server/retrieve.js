@@ -12,19 +12,23 @@ exports.topojson = function( req, res ) {
 	
 	var queryString = buildQuery( fields, req.params.table, req.params.where )
 	client.query( queryString, function( error, result ) {
-		dbgeo.parse({
-		    "data": result.rows,
-			"geometryColumn": "geom",
-			"outputFormat": "topojson",
-			"callback": function( error, result ) {
-				if( error ) {
-		    		    console.log( " --- error --- ", error);
-				} else {
-					res.send( result );
-					client.end();
+		if( error ) {
+			res.send( error );
+		} else {
+			dbgeo.parse({
+				"data": result.rows,
+				"geometryColumn": "geom",
+				"outputFormat": "topojson",
+				"callback": function( error, result ) {
+					if( error ) {
+						console.log( " --- error --- ", error);
+					} else {
+						res.send( result );
+						client.end();
+					}
 				}
-		    }
-		});
+			});
+		}
 	});
 }
 
