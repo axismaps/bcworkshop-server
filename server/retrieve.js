@@ -42,22 +42,27 @@ exports.download = function( req, res ) {
 	
 	var queryString = buildQuery( fields, "neighborhoods" )
 	client.query( queryString, function( error, result ) {
-		dbgeo.parse({
-		    "data": result.rows,
-			"geometryColumn": "geom",
-			"outputFormat": "geojson",
-			"callback": function( error, result ) {
-				if( error ) {
-					console.log( " --- error --- ", error);
-				} else {
-					var file = { "file" : result }
-					res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.geojson" });
-					res.set({ "Content-type" : "application/vnd.geo+json" });
-					res.send( file.file );
-					client.end();
+		if( error ) {
+			res.send( error );
+			client.end();
+		} else {
+			dbgeo.parse({
+				"data": result.rows,
+				"geometryColumn": "geom",
+				"outputFormat": "geojson",
+				"callback": function( error, result ) {
+					if( error ) {
+						console.log( " --- error --- ", error);
+					} else {
+						var file = { "file" : result }
+						res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.geojson" });
+						res.set({ "Content-type" : "application/vnd.geo+json" });
+						res.send( file.file );
+						client.end();
+					}
 				}
-		    }
-		});
+			});
+		}
 	});
 }
 
