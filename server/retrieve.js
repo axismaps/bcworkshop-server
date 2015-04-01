@@ -59,6 +59,24 @@ exports.download = function( req, res ) {
 	});
 }
 
+exports.latlon = function( req, res ) {
+	var client = new pg.Client( db.conn );
+	client.connect();
+	
+	var latlons = [];
+	
+	var query = client.query( "SELECT organizations.* FROM neighborhoods INNER JOIN organization_lookup ON neighborhoods.id = neighborhood INNER JOIN organizations ON organizations.id = organization WHERE ST_CONTAINS( geom, ST_SetSRID( ST_MakePoint(" + req.params.lon + "," + req.params.lat + "), 4326))" );
+	
+	query.on( 'row', function( result ) {
+		latlons.push( result );
+	})
+	
+	query.on( 'end', function() {
+		res.send( latlons );
+		client.end();
+	});
+}
+
 exports.services = function( req, res ) {
 	var client = new pg.Client( db.conn );
 	client.connect();
