@@ -15,19 +15,24 @@ exports.topojson = function( req, res ) {
 	var queryString = buildQuery( fields, req.params.table, req.params.where, order, 'DESC' );
 	
 	client.query( queryString, function( error, result ) {
-		dbgeo.parse({
-		    "data": result.rows,
-			"geometryColumn": "geom",
-			"outputFormat": "topojson",
-			"callback": function( error, result ) {
-				if( error ) {
-		    		    console.log( " --- error --- ", error);
-				} else {
-					res.send( result );
-					client.end();
+		if( error ) {
+			res.send( error );
+			client.end();
+		} else {
+			dbgeo.parse({
+				"data": result.rows,
+				"geometryColumn": "geom",
+				"outputFormat": "topojson",
+				"callback": function( error, result ) {
+					if( error ) {
+						console.log( " --- error --- ", error);
+					} else {
+						res.send( result );
+						client.end();
+					}
 				}
-		    }
-		});
+			});
+		}
 	});
 }
 
@@ -40,22 +45,27 @@ exports.download = function( req, res ) {
 	
 	var queryString = buildQuery( fields, "neighborhoods" )
 	client.query( queryString, function( error, result ) {
-		dbgeo.parse({
-		    "data": result.rows,
-			"geometryColumn": "geom",
-			"outputFormat": "geojson",
-			"callback": function( error, result ) {
-				if( error ) {
-					console.log( " --- error --- ", error);
-				} else {
-					var file = { "file" : result }
-					res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.geojson" });
-					res.set({ "Content-type" : "application/vnd.geo+json" });
-					res.send( file.file );
-					client.end();
+		if( error ) {
+			res.send( error );
+			client.end();
+		} else {
+			dbgeo.parse({
+				"data": result.rows,
+				"geometryColumn": "geom",
+				"outputFormat": "geojson",
+				"callback": function( error, result ) {
+					if( error ) {
+						console.log( " --- error --- ", error);
+					} else {
+						var file = { "file" : result }
+						res.set({ "Content-Disposition" : "attachment; filename=neighborhoods.geojson" });
+						res.set({ "Content-type" : "application/vnd.geo+json" });
+						res.send( file.file );
+						client.end();
+					}
 				}
-		    }
-		});
+			});
+		}
 	});
 }
 
@@ -72,7 +82,8 @@ exports.latlon = function( req, res ) {
 	})
 	
 	query.on( 'end', function() {
-		res.send( latlons );
+		if( latlons.length == 0 ) res.send( 'No neighborhood organizations work at this point' )
+		else res.send( latlons );
 		client.end();
 	});
 }
@@ -102,19 +113,24 @@ exports.process = function( req, res ) {
 	var queryString = "SELECT process, ST_AsGeoJSON( geom ) AS geom FROM neighborhoods_collection WHERE process = '" + req.params.neighborhood + "'";
 	
 	client.query( queryString, function( error, result ) {
-		dbgeo.parse({
-		    "data": result.rows,
-			"geometryColumn": "geom",
-			"outputFormat": "topojson",
-			"callback": function( error, result ) {
-				if( error ) {
-		    		    console.log( " --- error --- ", error);
-				} else {
-					res.send( result );
-					client.end();
+		if( error ) {
+			res.send( error );
+			client.end();
+		} else {
+			dbgeo.parse({
+				"data": result.rows,
+				"geometryColumn": "geom",
+				"outputFormat": "topojson",
+				"callback": function( error, result ) {
+					if( error ) {
+							console.log( " --- error --- ", error);
+					} else {
+						res.send( result );
+						client.end();
+					}
 				}
-		    }
-		});
+			});
+		}
 	});
 }
 
