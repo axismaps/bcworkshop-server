@@ -70,5 +70,7 @@ app.use( function(err, req, res, next) {
   res.send(err.message || "You tried to go somewhere that doesn't exist or you didn't put parameters in correctly" );
 });
 
-app.listen( 3000 );
-console.log( 'Listening on port 3000...' );
+var port = parseInt( process.argv[ 2 ], 10 );
+
+app.listen( port );
+console.log( 'Listening on port ' + port + '...' );
